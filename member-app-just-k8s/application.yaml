@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsp-member-backend-deployment
+  labels:
+    ecsp/backend: ecsp-member
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ecsp/backend: ecsp-member
+  template:
+    metadata: # metadata of the Pods.
+      labels:
+        ecsp/backend: ecsp-member # this labels all pods with the provided label.
+    spec:
+      containers:
+      - name: ecsp-member-backend
+        image: assaadnaes73733/ecsp-member-backend:1.0.0
+        ports:
+        - name: backend-port
+          containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsp-member-backend-service
+  labels:
+    ecsp/backend: ecsp-member
+spec:
+  selector:
+    ecsp/backend: ecsp-member
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: backend-port
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecsp-member-frontend-deployment
+  labels:
+    ecsp/backend: ecsp-member
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      ecsp/frontend: ecsp-member
+  template:
+    metadata:
+      labels:
+        ecsp/frontend: ecsp-member
+    spec:
+      containers:
+      - name: ecsp-member-frontend
+        image: assaadnaes73733/ecsp-member-frontend:1.0.0
+        ports:
+        - name: frontend-port
+          containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecsp-member-frontend-service
+  labels:
+    ecsp/frontend: ecsp-member
+spec:
+  selector:
+    ecsp/frontend: ecsp-member
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: frontend-port
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecsp-member-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /member
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ecsp-member-backend-service
+            port:
+              number: 8000
+      - path: /
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: ecsp-member-frontend-service
+            port:
+              number: 80
