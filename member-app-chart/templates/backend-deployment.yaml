@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-backend-deployment
+  labels:
+    {{- include "member-app-helm.labels" . | nindent 4 }}
+    {{- include "member-app-helm.backendLabels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCounts.backend }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "member-app-helm.backendLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "member-app-helm.labels" . | nindent 8 }}
+        {{- include "member-app-helm.backendLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Release.Name }}-backend
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.images.backend.repository }}:{{ .Values.images.backend.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.images.pullPolicy }}
+          ports:
+            - name: {{ .Values.services.backend.targetPort }}
+              containerPort: {{ .Values.services.backend.internalPort }}
+              protocol: TCP

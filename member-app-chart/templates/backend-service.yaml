@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-backend-service
+  labels:
+    {{- include "member-app-helm.labels" . | nindent 4 }}
+    {{- include "member-app-helm.backendLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.services.backend.type }}
+  ports:
+    - name: {{ .Values.services.backend.portName }}
+      port: {{ .Values.services.backend.port }}
+      targetPort: {{ .Values.services.backend.targetPort }}
+      protocol: TCP
+  selector:
+    {{- include "member-app-helm.backendLabels" . | nindent 4 }}
