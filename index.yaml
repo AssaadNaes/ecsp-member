@@ -3,12 +3,12 @@ entries:
   member-app-helm:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2026-04-02T09:50:49.219703+02:00"
+    created: "2026-04-02T12:08:35.953059+02:00"
     description: A Helm chart for Kubernetes
     digest: 295640972c4706e25932b7518597ea5450144ee4cb48fac2de099966f4d3d035
     name: member-app-helm
     type: application
     urls:
-    - git@github.com:AssaadNaes/ecsp-member.git/member-app-helm-0.1.0.tgz
+    - https://assaadnaes.github.io/ecsp-member/member-app-helm-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-02T09:50:49.219047+02:00"
+generated: "2026-04-02T12:08:35.952447+02:00"
