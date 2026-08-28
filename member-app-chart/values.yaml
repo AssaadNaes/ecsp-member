@@ -51,11 +51,11 @@ securityContext: {}
 
 # Labels for backend resources.
 backendLabels:
-  ecsp/backend: ecsp-member
+  app: ecsp-member-backend
 
 # Labels for backend resources.
 frontendLabels:
-  ecsp/frontend: ecsp-member
+  app: ecsp-member-frontend
 
 services:
   backend:
